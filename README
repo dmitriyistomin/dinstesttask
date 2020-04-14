@@ -1,0 +1,36 @@
+Hi
+
+Steps to install the project:
+1. Clone the repository
+2. Install pcap to your host machine and provide necessary root rights (https://github.com/kaitoy/pcap4j#others)
+3. mvn clean install
+
+Start the project:
+1. Start Traffic Capture Server:
+    a. Make sure that port 9999 is not used
+    b. mvn exec:java -Dexec.mainClass="traffic_capture.TrafficCapture"
+    c. When program starts several network interfaces are suggested to be sniffed.
+    Choose any but the better would be NIF[X]: any
+2.  Start Zookeeper and Apache Kafka;
+    a. Have kafka installed and cd to the folder
+    b. Start Zookeeper bin/zookeeper-server-start.sh config/zookeeper.properties
+    c. Start Kafka bin/kafka-server-start.sh config/server.properties
+    d. Create topic if not exists
+    bin/kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-fac1 --partitions 1 --topic alerts
+    e. Start a consumer
+    bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic alerts
+3.  Deploy the database
+    docker-compose src/main/java/database/docker-compose.yml
+4.  Start the Spark
+    mvn exec:java -Dexec.mainClass="spark.TrafficLimitStreaming"
+    with arguments:
+    mvn exec:java -Dexec.mainClass="spark.TrafficLimitStreaming" -Dexec.args="toIp=127.0.0.1"
+    mvn exec:java -Dexec.mainClass="spark.TrafficLimitStreaming" -Dexec.args="fromIp=127.0.0.1"
+
+How it works:
+TrafficCapture server sniffs traffic and sends information about the captured packages by socket
+(package size, source ip and destination ip)
+TrafficLimitStreaming uses data from socket, maps data to Package class
+filterTraffic(JavaDStream<Package> traffic, String[] args) method filters packages by source/destination ip
+each time the summarized size of packages calculated the actual traffic limits are requested (DatabaseUtil class is used)
+limits are already preset and created when database/docker-compose.yml executed (database.sql is used)
