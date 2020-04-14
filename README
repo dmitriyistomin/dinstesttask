@@ -1,11 +1,11 @@
 Hi
 
-Steps to install the project:
+## Steps to install the project:
 1. Clone the repository
-2. Install pcap to your host machine and provide necessary root rights (https://github.com/kaitoy/pcap4j#others)
+2. Install pcap to your host machine and provide necessary root rights [Information](https://github.com/kaitoy/pcap4j#others)
 3. mvn clean install
 
-Start the project:
+## Start the project:
 1. Start Traffic Capture Server:
     a. Make sure that port 9999 is not used
     b. mvn exec:java -Dexec.mainClass="traffic_capture.TrafficCapture"
@@ -27,7 +27,7 @@ Start the project:
     mvn exec:java -Dexec.mainClass="spark.TrafficLimitStreaming" -Dexec.args="toIp=127.0.0.1"
     mvn exec:java -Dexec.mainClass="spark.TrafficLimitStreaming" -Dexec.args="fromIp=127.0.0.1"
 
-How it works:
+## How it works:
 TrafficCapture server sniffs traffic and sends information about the captured packages by socket
 (package size, source ip and destination ip)
 TrafficLimitStreaming uses data from socket, maps data to Package class
